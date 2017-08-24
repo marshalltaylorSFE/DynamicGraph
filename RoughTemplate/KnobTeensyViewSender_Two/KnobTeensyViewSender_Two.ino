@@ -27,6 +27,7 @@
 
 #include "TeensyView.h"  // Include the TeensyView library
 #include "PanelComponents.h"
+#include "PanelComponents_Debug.h"
 #include "HardwareInterfaces.h"
 
 #include <Audio.h>
@@ -67,13 +68,6 @@ TeensyView oled(PIN_RESET, PIN_DC, PIN_CS, PIN_SCK, PIN_MOSI);
 //  (OLED)
 //  4   5
 
-
-
-
-
-
-
-
 //Globals
 uint32_t maxTimer = 60000000;
 uint32_t maxInterval = 2000000;
@@ -87,11 +81,11 @@ uint32_t packetNumber = 0;
 #define	KNOB4POS A6
 #define	KNOB5POS A7
 
-Windowed10BitKnob knob1;
-Windowed10BitKnob knob2;
-Windowed10BitKnob knob3;
-Windowed10BitKnob knob4;
-Windowed10BitKnob knob5;
+Windowed10BitKnob_Debug knob1;
+Windowed10BitKnob_Debug knob2;
+Windowed10BitKnob_Debug knob3;
+Windowed10BitKnob_Debug knob4;
+Windowed10BitKnob_Debug knob5;
 
 uint16_t debugCounter = 0;
 
@@ -113,7 +107,7 @@ IntervalTimer myTimer; //Interrupt for Teensy
 
 //**32 bit timer classes *********************//  
 TimerClass32 debugTimer( 1000000 ); //1 seconds
-TimerClass32 serialSendTimer( 15000 ); //0.015 seconds
+TimerClass32 serialSendTimer( 30000 ); //0.015 seconds
 TimerClass32 remoteInputTimer( 3000 );
 
 //--tick variable for interrupt driven timer1
@@ -127,6 +121,11 @@ knobPacket packetFromHost;
 
 //**Serial Machine****************************//
 uCPacketUART dataLinkHandler((HardwareSerial*)&REMOTELINKPORT, 64); //64 byte buffers
+
+
+//variables to send data back to processing
+uint16_t triggered = 0;
+uint16_t lastTriggeredData = 0;
 
 void setup()
 {
@@ -378,6 +377,9 @@ void loop()
 			}
 			displayData = 5;
 			sine2.frequency(knob5.getAsFloat() + 30.25);
+			triggered = 1;
+			lastTriggeredData = knob5.getAsUInt16();
+			
 		}
 		
 		if((requestClearScreenFlag == 1)&&(screenClearedFlag == 0))
@@ -388,11 +390,12 @@ void loop()
 			oled.display();
 		}
 
-		packetToHost.knob1 = knob1.getAsUInt16();
-		packetToHost.knob2 = knob2.getAsUInt16();
-		packetToHost.knob3 = knob3.getAsUInt16();
-		packetToHost.knob4 = knob4.getAsUInt16();
-		packetToHost.knob5 = knob5.getAsUInt16();
+		packetToHost.rawADC = knob5.getRaw();
+		packetToHost.filteredADC = lastTriggeredData;
+		//packetToHost.knob3 = knob3.getAsUInt16();
+		//packetToHost.knob4 = knob4.getAsUInt16();
+		packetToHost.event = triggered;
+		if(triggered == 1) triggered = 0;
 		packetToHost.packetNumber++;
 		// If new, ship it!
 		if( tempStatus )

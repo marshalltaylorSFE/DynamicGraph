@@ -9,6 +9,8 @@ class pGraph
 		randomKnob.traceColor[0] = 0;
 		randomKnob.traceColor[1] = 0;
 		randomKnob.traceColor[2] = 255;
+		eventStream = new GraphTrace();
+		eventStream.y_scale = 20;
 		background = createShape(RECT, 0, 0, x_size, y_size);
 		background.setFill(color(255, 255, 255));
 		background.setStroke(false);
@@ -57,11 +59,13 @@ class pGraph
 	{
 		rawInput.postDraw();
 		randomKnob.postDraw();
+		eventStream.postDraw();
 	}
 	PShape background;
 	GraphTrace rawInput;
 	GraphTrace randomKnob;
-
+	GraphTrace eventStream;
+	
 	int x_origin = 140;
 	int y_origin = 316;
 	int x_size = 540;

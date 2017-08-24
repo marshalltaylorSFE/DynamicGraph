@@ -18,11 +18,11 @@ struct robotHostPacket
 
 struct knobPacket
 {
-	uint16_t knob1;
-	uint16_t knob2;
-	uint16_t knob3;
-	uint16_t knob4;
-	uint16_t knob5;
+	uint16_t rawADC;
+	uint16_t filteredADC;
+	uint16_t var1;
+	uint16_t var2;
+	uint16_t event;
 	uint16_t packetNumber;
 };
 

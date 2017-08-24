@@ -49,6 +49,14 @@ class uCPacketUART
 				event = unhex(pBuffer.substring(19,21) + pBuffer.substring(17,19));
 				packetNumber = unhex(pBuffer.substring(23,25) + pBuffer.substring(21,23));
 				
+				//Load serial window
+				if( event != 0 )
+				{
+					debugDataLatestPtr++;
+					if(debugDataLatestPtr >= 20) debugDataLatestPtr = 0;
+					debugData[debugDataLatestPtr] = filteredADC;
+				}
+				
 			}
 		}
 		return returnVar;
