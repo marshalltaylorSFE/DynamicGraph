@@ -15,11 +15,13 @@ public:
 	virtual void freshen( uint16_t msTickDelta );
 	void setHysteresis( uint8_t );
 	uint16_t getState( void );
+	uint16_t getThreshold( void );
 protected:
 	uint16_t state;
 	uint16_t lastState;
 	uint8_t hysteresis = 2;
 	int8_t lastSlope = 1;
+	uint16_t threshold = 0;
 
 };
 

@@ -20,35 +20,13 @@ void Simple10BitKnob_Debug::freshen( uint16_t msTickDelta )
 //Serial.println("Created");
 	hardwareInterface->getData(&tempObject);
 	
-	int16_t tempState = *(uint16_t *)tempObject.data;
-	int8_t tempSlope = 0;
-	state = tempState;
-	int8_t histDirTemp = 0;
-	if( state > lastState )
+	state = *(uint16_t *)tempObject.data;
+	
+	if( (state & 0b1111110000) != lastState )
 	{
-		tempSlope = 1;
-		if( lastSlope == 1 ) histDirTemp = 1;
-	}
-	else if( state < lastState )
-	{
-		tempSlope = -1;
-		if( lastSlope == -1 ) histDirTemp = -1;
-	}
-	if( tempSlope != 0 )
-	{
-		if( state > (uint32_t)lastState + hysteresis || histDirTemp == 1)
-		{
-			newData = 1;
-			lastState = state;
-			lastSlope = tempSlope;
-		}
-		if( state < (uint32_t)lastState - hysteresis || histDirTemp == -1 )
-		{
-			newData = 1;
-			lastState = state;
-			lastSlope = tempSlope;
-		}
-
+		lastState = (state & 0b1111110000);
+		
+		newData = 1;
 	}
 //Serial.print("Temp ");
 //dumpObject(tempObject);
@@ -66,6 +44,11 @@ void Simple10BitKnob_Debug::setHysteresis( uint8_t input )
 uint16_t Simple10BitKnob_Debug::getState( void )
 {
   return state;
+}
+
+uint16_t Simple10BitKnob_Debug::getLastState( void )
+{
+  return lastState;
 }
 
 //---Complex10BitKnob_Debug--------------------------------------------

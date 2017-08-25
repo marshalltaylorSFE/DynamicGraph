@@ -123,22 +123,22 @@ void draw() {  // draw() loops forever, until stopped
 	outputString = "Raw";
 	text(outputString, 110, 435);	
 
-	stroke(0,0,255);
-	line(50,460,100,460);
-	outputString = "Filtered";
-	text(outputString, 110, 465);		
+	//stroke(0,0,255);
+	//line(50,460,100,460);
+	//outputString = "Filtered";
+	//text(outputString, 110, 465);		
 
-	stroke(0,255,0);
-	line(50,490,100,490);
-	outputString = "Threshold";
-	text(outputString, 110, 495);		
+	//stroke(0,255,0);
+	//line(50,490,100,490);
+	//outputString = "Threshold";
+	//text(outputString, 110, 495);		
 
 	outputString = "Filter Type:";
 	text(outputString, 25, 600);
 	textSize(24);
-	outputString = "Hysteresis of 1";
+	outputString = "None";
 	text(outputString, 35, 630);
-	outputString = "15 samples averaged";
+	outputString = "";
 	text(outputString, 35, 660);
 	
 	drawTermBox(390, 190, displayValue);

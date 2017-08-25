@@ -15,6 +15,7 @@ public:
 	virtual void freshen( uint16_t msTickDelta );
 	void setHysteresis( uint8_t );
 	uint16_t getState( void );
+	uint16_t getLastState( void );
 protected:
 	uint16_t state;
 	uint16_t lastState;

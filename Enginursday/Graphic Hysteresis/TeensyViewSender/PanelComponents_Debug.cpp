@@ -41,12 +41,14 @@ void Simple10BitKnob_Debug::freshen( uint16_t msTickDelta )
 			newData = 1;
 			lastState = state;
 			lastSlope = tempSlope;
+			threshold = lastState - (int16_t)hysteresis;
 		}
 		if( state < (uint32_t)lastState - hysteresis || histDirTemp == -1 )
 		{
 			newData = 1;
 			lastState = state;
 			lastSlope = tempSlope;
+			threshold = lastState + (int16_t)hysteresis;
 		}
 
 	}
@@ -66,6 +68,11 @@ void Simple10BitKnob_Debug::setHysteresis( uint8_t input )
 uint16_t Simple10BitKnob_Debug::getState( void )
 {
   return state;
+}
+
+uint16_t Simple10BitKnob_Debug::getThreshold( void )
+{
+  return threshold;
 }
 
 //---Complex10BitKnob_Debug--------------------------------------------

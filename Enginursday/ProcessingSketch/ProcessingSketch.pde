@@ -82,6 +82,9 @@ void draw() {  // draw() loops forever, until stopped
 
 	myGraph.randomKnob.write((int)mySerialReceiver.filteredADC);
 
+	myGraph.var1 = (int)mySerialReceiver.var1;
+	myGraph.var2 = (int)mySerialReceiver.var2;
+	
 	myLogicGraph.eventStream.write((int)mySerialReceiver.event);
 	background(242,230,210);
 
@@ -123,12 +126,12 @@ void draw() {  // draw() loops forever, until stopped
 	outputString = "Raw";
 	text(outputString, 110, 435);	
 
-	stroke(0,0,255);
+	stroke(27, 106, 209);
 	line(50,460,100,460);
 	outputString = "Filtered";
 	text(outputString, 110, 465);		
 
-	stroke(0,255,0);
+	stroke(102, 191, 1);
 	line(50,490,100,490);
 	outputString = "Threshold";
 	text(outputString, 110, 495);		
@@ -136,9 +139,9 @@ void draw() {  // draw() loops forever, until stopped
 	outputString = "Filter Type:";
 	text(outputString, 25, 600);
 	textSize(24);
-	outputString = "Hysteresis of 1";
+	outputString = str(myGraph.var1 - myGraph.var2) + " pt. window";
 	text(outputString, 35, 630);
-	outputString = "15 samples averaged";
+	outputString = "";
 	text(outputString, 35, 660);
 	
 	drawTermBox(390, 190, displayValue);

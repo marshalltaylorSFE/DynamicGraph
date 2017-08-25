@@ -85,7 +85,7 @@ Windowed10BitKnob_Debug knob1;
 Windowed10BitKnob_Debug knob2;
 Windowed10BitKnob_Debug knob3;
 Windowed10BitKnob_Debug knob4;
-Windowed10BitKnob_Debug knob5;
+Simple10BitKnob_Debug knob5;
 
 uint16_t debugCounter = 0;
 
@@ -169,12 +169,12 @@ void setup()
 	knob4.setWindow(10);
 	knob4.setSamplesAveraged(10);
 	
-	knob5.setLowerUIntVal(0);
-	knob5.setUpperUIntVal(1023);
-	knob5.setLowerFloatVal(0);
-	knob5.setUpperFloatVal(440);
-	knob5.setWindow(10);
-	knob5.setSamplesAveraged(10);
+	//knob5.setLowerUIntVal(0);
+	//knob5.setUpperUIntVal(1023);
+	//knob5.setLowerFloatVal(0);
+	//knob5.setUpperFloatVal(440);
+	//knob5.setWindow(10);
+	//knob5.setSamplesAveraged(10);
 //                                        	//Run update a few times to fill the averaging buffers
 //                                        	for(int i = 0; i < 10; i++) 
 //                                        	{
@@ -313,7 +313,7 @@ void loop()
 			}
 			displayData = 2;
 			knob4.setWindow(knob2.getAsUInt16());
-			knob5.setWindow(knob2.getAsUInt16());
+			knob5.setHysteresis(knob2.getAsUInt16());
 		}
 		if(knob3.serviceChanged())
 		{
@@ -328,7 +328,7 @@ void loop()
 			}
 			displayData = 3;
 			knob4.setSamplesAveraged(knob3.getAsUInt16());
-			knob5.setSamplesAveraged(knob3.getAsUInt16());
+			//knob5.setSamplesAveraged(knob3.getAsUInt16());
 		}
 		if((knob4.serviceChanged())||((requestKnob4ScreenFlag == 1)&&(knob4ScreenFlag == 0)))
 		{
@@ -372,13 +372,13 @@ void loop()
 				oled.print("             ");
 				oled.setCursor(0,0);
 				oled.print("R Hz: ");
-				oled.print(knob5.getAsFloat() + 30.25);
+				oled.print(knob5.getState());
 				oled.display();
 			}
 			displayData = 5;
-			sine2.frequency(knob5.getAsFloat() + 30.25);
+			//sine2.frequency(knob5.getAsFloat() + 30.25);
 			triggered = 1;
-			lastTriggeredData = knob5.getAsUInt16();
+			lastTriggeredData = knob5.getLastState();
 			
 		}
 		
@@ -390,10 +390,10 @@ void loop()
 			oled.display();
 		}
 
-		packetToHost.rawADC = knob5.getRaw();
+		packetToHost.rawADC = knob5.getState();
 		packetToHost.filteredADC = lastTriggeredData;
-		packetToHost.var1 = knob5.getWindowUpper();
-		packetToHost.var2 = knob5.getWindowLower();
+		packetToHost.var1 = knob2.getAsUInt16();
+		//packetToHost.var2 = knob5.getWindowLower();
 		packetToHost.event = triggered;
 		if(triggered == 1) triggered = 0;
 		packetToHost.packetNumber++;
