@@ -1,79 +1,97 @@
-[A] LECTURE HALL, HOLDING POTENTIOMETER WITH WIRES
+[A1] LECTURE HALL, HOLDING POTENTIOMETER WITH WIRES
 
-Most likely you've attached a potentiometer to an ADC to read the position.
+Most likely, you've attached a potentiometer to an ADC to read the position before.
 
-[B] ARDUINO WINDOW
+[B] LECTURE HALL, ZOOM ON REDBOARD, ATTACHING WIRES
 
-If you read the analog value at some interval, the system can do something with it,...
+The potentiometer splits the voltage rail and then we put the center tap into the ADC.
 
-[C] ADD IN SERIAL MONITOR
+[C] ARDUINO WINDOW
+
+Now if we read the analog value at some interval, the system can do something with it,...
+
+[D] ADD IN SERIAL MONITOR
 
 ... such as send the data to a serial monitor.
 
-[D] LECTURE HALL, closer to subject
+[E] LECTURE HALL, closer to subject
 
-But what if you want to detect when the knob is changed, instead?
+But what if you want to detect when the knob is changed, instead?  In this video, I'll demonstrate several topologies aimed at smooting out noise, and providing movement detection logic, so let's get get over to my desk.
 
-[E] PREVIEW OF WINDOW MODE (REUSE FUTURE CLIP)
+[F] DESKTOP, NO ITEMS, ARDUINO WINDOW FLOATING
 
-In this video, I'll use this built-up teensy and a processing program to show the internal logic of several topologies aimed at smooting out noise and providing motion detection logic.
-
-[F] LECTURE HALL
-
-OK, so the goal is to detect a purposeful change in knob position.  We'll have to compare some present input value to a saved value.
+OK, so if the goal is to detect a change in knob position.  We'll have to compare the present ADC input value to a some saved value.
 
 [G] ARDUINO CAPTURE
 
-Alright, so we'll add a memory element to the global space and then compare it to the current value.
+We'll add a memory element to the global space,... and then compare it to the current value.  If they are not the same, we know the knob has moved.
 
 [H] OUTPUT WINDOW
 
-But rather than using the crusty serial monitor, this processing program draws a graph in real time.  Here, the red trace shows the raw ADC value, and the purple trace down below indicates when the two values are not equal.  No matter where I position the knob, the system is constantly detecting the change.  It's a bit better than no movement detection though, as repeated input values are ignored.
+But rather than using the crusty ol' serial monitor, I've written this processing program to draw a graph in real time.  Here, the red trace shows the raw ADC value, and the purple trace down below indicates when the two values are not equal.
 
-[I] ARDUINO CAPTURE
+[I] BRING IN KNOB BOX
+
+I've also replaced the redboard with a development tool that has more noise, but the concepts are the same.
+
+[J] TURNING THE KNOB
+
+No matter where I position the knob, the system is constantly detecting the change.  It's a bit better than no movement detection though, as repeated input values are ignored.
+
+[K] CLOSE ALL WINDOWS EXCEPT ARDUINO CAPTURE
 
 A super easy thing we can try is to chop off those pesky least significant bits where the noise is.  We see a few counts of noise so let's kill the lowest 4 bits, or a range of 16.  We'll do this by logically anding a binary mask.
 
-[J] OUTPUT WINDOW
-
-Check out the strange behavior.  I'm now displaying the current ADC value, as well as the chopped data.  It's improved!  Well, kind of.  Now the logic detects less noise without input, but the effective resolution has gone down, and there are still areas where misdetection is just as bad.  But it is very cheap on the processor and may be acceptable for some applications.
-
-[K] ARDUINO CAPTURE
-
-Let's add a little more complication.  Instead, we could check that the input has exceeded a plus-minus range rather than just blast off the least significant bits.  To do this I'll check if the new reading is greater than the last reading plus some noise range, OR, the new reading is less than the last reading minus the noise range, we do our logic.
-
 [L] OUTPUT WINDOW
 
-The result is that the input is now stable.  But unfortunately, you can also see that the accuracy of the knob is still decimated.
+I'm now displaying the current ADC value, as well as the chopped value.  It now has a lower resolution behavior, but the trigger detection is improved.  There are still areas where misdetection is just as bad, where binary carries occur, but it is very cheap on the processor to implement and may be acceptable for some applications.
 
-[M] LECTURE HALL
+[M] ARDUINO CAPTURE
 
-These solutions are great for punching some code in real fast to get something done.  I've entered this code so many times though, I got frustrated and bought a book on object orientation.  Basically if you find yourself writing the same code over and over again, it should be contained within a class.  Especially here where the logic will always be the same, but I may need to apply it to different platforms.  The tradeoff for ease of reuse is that it becomes harder for humans to read without having knowledge of the underlying system.  So from here on, I'll leave out the implementation.
+Let's add a little more complication.  Instead, we could check that the input has exceeded a plus-minus range rather than just blast off the least significant bits.  To do this I'll check if the new reading is greater than the last reading plus some noise range, OR, the new reading is less than the last reading minus the noise range.
 
 [N] OUTPUT WINDOW
 
-In this example I add a sort of hysteresis.  If the movement is upward, I allow the output to move freely, but prevent downward movement until a negative threshold is passed. Conversely, if the trend is downward, the treshold is applied positively.  Noise is contained within the hysteresis range.
-
-You can see I can bump it by single numbers now!  This much more accurate than the arithmatic range approach!  But if I go too far, It's hard to nudge the output back down.
+With a large +/- range defined, the system is super stable but there are these huge steps when the threshold is passed.  I can adjust the range live with this tool, and when I bring it to about the width of the noise, it's pretty stable without a huge impact to accuracy.
 
 [O] LECTURE HALL
 
-I feel this is close, so in the next example I want to create a window such that movement nudges that window up and down.  It's kind of like having two movable hysteresis thresholds combined, and is implemented by saving an upper and lower limit, than moving both together when either range is exceeded.
+These solutions are great for punching some code in real fast to get something done.  I've entered this code so many times though, I got frustrated and bought a book on object orientation.  Basically if you find yourself writing the same code over and over again, it should be contained within a class.  Especially here where the logic will always be the same, but I may need to apply it to different platforms.  The tradeoff for ease of reuse is that it becomes harder for humans to read without having knowledge of the underlying system.  So from here on, I'll only show you the core algorithm.
 
-[P] OUTPUT WINDOW
+[P] NOTEPAD
 
-So now, the window isn't changed until either limit is surpassed, which also conincides with a detection hit.  Despite having a fair ammount of noise, I can still dial this knob into a single number with only a slight degregation to the range of the knob.  If you think about it, the output can only be one of 1024 minus the window width possible values, and so the full range is regenerated through scaling, leading to a few numbers missing from the set of possibilities.
+In this example I've added a sort of hysteresis.  If the movement is upward, I allow the output to move freely, but prevent downward movement until a negative threshold is passed. Conversely, if the trend is downward, the treshold is applied positively.
 
-This demo has another feature.  I can perform a rolling average on a number of the most recent readings, and use that as in imput to the detection logic instead.  Much like an RC filter, a delay is imposed.  This is also a computationally intensive operation.
+[Q] OUTPUT WINDOW
 
-[Q] LECTURE
+I'll give it a rediculously large threshold here so we can see how it behaves.
 
-My perferred method to get out of the mud is to use a window value of about 5, which is cheap, and a small rolling average of 3 or 4 samples.  When working on super large systems like this though,..
+I can bump it by single numbers now!  This removes the steps from the arithmatic range approach, but only in one direction!  If I go too far, It's hard to nudge the output back down.
 
-[R] SHOW OFF PANEL SYNTH
+[R] LECTURE HALL
 
-...I really pick and choose.  Some of these knobs are connected to things with little processing impact so I slap the simple logic on them, while others such as fine tuning require percision, and I'm willing to spend more of my resources to have them stable.
+We are close to something useable, in the next example I want to create a window such that movement nudges that window up and down.
 
-[S] LECTURE
+[S]NOTEPAD WINDOW
 
-I hope this lecture has given you something you can use, and something to think about.  Thanks for watching
+It's kind of like having two movable hysteresis thresholds combined, and is implemented by saving an upper and lower limit, than moving both together when either range is exceeded.
+
+[T] OUTPUT WINDOW
+
+So now, the window isn't changed until either limit is surpassed, which also conincides with a detection hit.  Despite having a fair ammount of noise, I can still dial this knob into a single number with only a slight degregation to the range of the knob.
+
+Now I'll run this example again but with a rolling average of the most recent 15 samples, and pass that to the detection logic instead.  Much like an RC filter, a delay is imposed.  This is a very computationally intensive operation.
+
+[U] LECTURE
+
+My perferred method to get out of the mud is to use a window value of about 5, which is cheap, and a small rolling average of 3 or 4 samples.
+
+When working on large systems like this though,..
+
+[V] SHOW OFF PANEL SYNTH
+
+...I really pick and choose.  Some of these knobs are connected to things with little processing impact so I slap the simple logic on them, while others such as fine tuners require percision, and I'm willing to spend more of my resources to have them stable.
+
+[W] LECTURE
+
+I hope this lecture has given you something you can use, and something to think about.  Thanks for watching!

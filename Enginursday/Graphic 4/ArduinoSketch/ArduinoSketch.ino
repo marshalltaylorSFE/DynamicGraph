@@ -7,12 +7,12 @@ int lastReading;
 void setup()
 {
 	Serial.begin(115200);
-	lastReading = analogRead(KNOB_PIN) & 0b1111111000;
+	lastReading = analogRead(KNOB_PIN);
 }
 
 void loop()
 {
-	int newReading = analogRead(KNOB_PIN) & 0b1111111000;
+	int newReading = analogRead(KNOB_PIN);
 	if(( newReading > lastReading + NOISE_RANGE )||( newReading < lastReading - NOISE_RANGE ))
 	{
 		Serial.println(newReading);

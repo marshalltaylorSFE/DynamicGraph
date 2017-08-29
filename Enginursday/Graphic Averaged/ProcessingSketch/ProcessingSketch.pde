@@ -131,17 +131,17 @@ void draw() {  // draw() loops forever, until stopped
 	outputString = "Filtered";
 	text(outputString, 110, 465);		
 
-	//stroke(102, 191, 1);
-	//line(50,490,100,490);
-	//outputString = "Threshold";
-	//text(outputString, 110, 495);		
+	stroke(102, 191, 1);
+	line(50,490,100,490);
+	outputString = "Threshold";
+	text(outputString, 110, 495);		
 
 	outputString = "Filter Type:";
 	text(outputString, 25, 600);
 	textSize(24);
-	outputString = "mask of '1111110000'";
+	outputString = str(myGraph.var1 - myGraph.var2) + " pt. window";
 	text(outputString, 35, 630);
-	outputString = "";
+	outputString = "15 sample ave.";
 	text(outputString, 35, 660);
 	
 	drawTermBox(390, 190, displayValue);
